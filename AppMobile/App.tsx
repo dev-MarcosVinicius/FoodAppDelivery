@@ -39,7 +39,8 @@ export default class App extends Component {
       toggleCheckBox: false,
       LoginStatus: 0,
       SignInStatus: 0,
-      viewLoggerInUser: 0
+      viewLoggerInUser: 0,
+      viewInputItem: 0
     }
   }
 
@@ -79,6 +80,7 @@ export default class App extends Component {
     })
     .then(res=>res.json())
 
+    this.getData()
     this.setState({Product:''})
     Alert.alert('Item Adicionado')
   }
@@ -175,9 +177,7 @@ export default class App extends Component {
     this.setState({LoginStatus:0})
   }
 
-  /*deleteData(id){
-    Alert.alert('Item Exluido')
-
+  deleteData(id){
     fetch("http://192.168.0.107:3000/delete", {
       method:"post",
       headers:{
@@ -188,7 +188,8 @@ export default class App extends Component {
       })
     })
     .then(res=>res.json())
-  }*/
+    this.getData()
+  }
 
   updateStatusDelivery(id){
     if (this.state.Status == 'Pendente') {
@@ -218,13 +219,23 @@ export default class App extends Component {
     .then(res=>res.json())
     this.setState({Status:'Pendente'})
   }
+  this.getData()
 }
+
+  updateViewInput() {
+    if (this.state.viewInputItem == 0) {
+    this.setState({viewInputItem:1})
+    }
+    else {
+      this.setState({viewInputItem:0})
+    }
+  }
 
  /* USERS TYPES */
  deliveryLogged () {
   return (
     <View style={{alignItems:'center'}}>
-    <View style={{backgroundColor:'tomato',flexDirection:'row',borderBottomStartRadius:20, borderBottomEndRadius:20}}>
+    <View style={{backgroundColor:'tomato',flexDirection:'row',borderBottomStartRadius:20, borderBottomEndRadius:20,marginBottom:5,maxWidth:360,minWidth:360}}>
       <View style={{maxWidth:260}}>
       <Text style={{color: 'white', fontSize:18, alignSelf:'center', margin:15}}>
         Bem-vindo, {this.state.loggedInUser}
@@ -245,28 +256,19 @@ export default class App extends Component {
       </TouchableOpacity>
     </View>
     </View>
-      <Text>Cadastre aqui os itens que serão vendidos</Text>
-      <View style={{flexDirection:'row'}}>
+  
       {/*<CheckBox
               disabled={false}
               value={this.state.toggleCheckBox}
               onValueChange={(toggleCheckBox) => {this.setState({toggleCheckBox})}}/>*/}
-          <TextInput
-           placeholder={'Nome do Item'}
-           onChangeText={Product => {this.setState({ Product })}}
-           value={this.state.Product}/>
-           </View>
-            <Button
-            title="Enviar"
-            onPress={this.submitData}/>
              {this.state.Dados.map(data=>(
              <View key={data._id}>
              <TouchableOpacity onPress={() => this.updateStatusDelivery(data._id)}>
-             <View style={{height: 50,backgroundColor:'tomato',flexDirection:'row'}}>
-             <View>
+             <View style={{height: 60,backgroundColor:'tomato',flexDirection:'row', margin:5 ,borderRadius:6}}>
+             <View style={{maxWidth:170,minWidth:170,alignSelf:'center',paddingLeft:50}}>
              <Text style={{alignItems:'flex-start',color:'white'}}>{data.productc}  </Text>
              </View>
-             <View>
+             <View style={{maxWidth:170,minWidth:170,alignSelf:'center',paddingLeft:50}}>
              <Text style={{alignItems:'flex-end', color:'white'}}>{data.statusc}</Text>
              </View>
              </View>
@@ -280,15 +282,31 @@ export default class App extends Component {
   adminLogged () {
     return (
       <View style={{alignItems:'center'}}>
-      <View style={{backgroundColor:'tomato',flexDirection:'row'}}>
+      <View style={{backgroundColor:'tomato',flexDirection:'row',maxWidth: 360,
+      minWidth:360,borderBottomLeftRadius:6,borderBottomRightRadius:6,marginBottom:5}}>
         <View>
-        <Text style={{color: 'white', fontSize:18, alignSelf:'center', margin:15}}>
+        <Text style={{color: 'white', fontSize:18, alignSelf:'center',
+        margin:15,paddingRight:15}}>
           Bem-vindo, {this.state.loggedInUser}
         </Text>
         </View>
-      <View>
+      <View style={{flexDirection:'row'}}>
+        {this.state.viewInputItem == 0 && 
+      <TouchableOpacity onPress={() => this.updateViewInput()}>
+          <View style={{margin:15,paddingRight:8}}>
+          <Icon name='add-circle-outline' size={22} color='white' />
+          </View>
+        </TouchableOpacity>
+       }
+       {this.state.viewInputItem == 1 && 
+       <TouchableOpacity onPress={() => this.updateViewInput()}>
+       <View style={{margin:15,paddingRight:8}}>
+       <Icon name='remove-circle-outline' size={22} color='white' />
+       </View>
+      </TouchableOpacity>
+      }
         <TouchableOpacity onPress={() => this.getData()}>
-          <View style={{margin:15}}>
+          <View style={{margin:15,paddingRight:8}}>
           <Icon name='cloud-download-outline' size={22} color='white' />
           </View>
         </TouchableOpacity>
@@ -301,6 +319,7 @@ export default class App extends Component {
         </TouchableOpacity>
       </View>
       </View>
+      {this.state.viewInputItem == 1 && <View style={{alignItems:'center'}}>
         <Text>Cadastre aqui os itens que serão vendidos</Text>
         <View style={{flexDirection:'row'}}>
         {/*<CheckBox
@@ -308,23 +327,38 @@ export default class App extends Component {
                 value={this.state.toggleCheckBox}
                 onValueChange={(toggleCheckBox) => {this.setState({toggleCheckBox})}}/>*/}
             <TextInput
+             style={styles.textInputAdmin}
+             placeholderTextColor={'white'}
              placeholder={'Nome do Item'}
              onChangeText={Product => {this.setState({ Product })}}
              value={this.state.Product}/>
              </View>
-              <Button
-              title="Enviar"
-              onPress={this.submitData}/>
-               {this.state.Dados.map(data=>(
-               <View key={data._id}>
-                 <TouchableOpacity onPress={() => this.updateStatusDelivery(data._id)}>
-                 <View style={{height: 50,backgroundColor:'#864425',flexDirection:'row'}}>
-               <Text style={{alignItems:'flex-start'}}>{data.productc}  </Text>
-               <Text style={{alignItems:'flex-end'}}>{data.statusc}</Text>
-               </View>
-               </TouchableOpacity>
-          </View>
-        ))}
+             <TouchableOpacity onPress={this.submitData}>
+              <View style={styles.buttonAdmin}>
+               <Text style={{color:'white', fontSize:18, marginRight:30, marginLeft:30}}>
+                Enviar
+              </Text>
+              <Icon name='arrow-forward-circle-outline' size={22} color='white' />
+             </View>
+           </TouchableOpacity>
+         </View>
+         }
+           <ScrollView style={ this.state.viewInputItem == 1 ? {maxHeight:457} : {maxHeight:589}}>
+           {this.state.Dados.map(data=>(
+             <View key={data._id}>
+             <TouchableOpacity onPress={() => this.updateStatusDelivery(data._id)} onLongPress={() => this.deleteData(data._id)}>
+             <View style={{height: 60,backgroundColor:'tomato',flexDirection:'row', margin:5 ,borderRadius:6}}>
+             <View style={{maxWidth:170,minWidth:170,alignSelf:'center',paddingLeft:50}}>
+             <Text style={{alignItems:'flex-start',color:'white'}}>{data.productc}  </Text>
+             </View>
+             <View style={{maxWidth:170,minWidth:170,alignSelf:'center',paddingLeft:50}}>
+             <Text style={{alignItems:'flex-end', color:'white'}}>{data.statusc}</Text>
+             </View>
+             </View>
+             </TouchableOpacity>
+        </View>
+      ))}
+      </ScrollView>
       </View>
     );
   }
@@ -488,6 +522,17 @@ const styles = StyleSheet.create({
     marginBottom:5,
     fontSize:16
   },
+  textInputAdmin: {
+    backgroundColor:'tomato',
+    color:'white',
+    borderRadius:15,
+    textAlign:'center',
+    marginHorizontal:40,
+    marginBottom:5,
+    maxWidth:300,
+    minWidth:300,
+    fontSize:16
+  },
   button: {
     backgroundColor: 'tomato',
     alignItems: 'center',
@@ -496,6 +541,19 @@ const styles = StyleSheet.create({
     marginHorizontal:40,
     marginTop:30,
     padding:10,
+    flexDirection:'row'
+  },
+  buttonAdmin: {
+    backgroundColor: 'tomato',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    marginHorizontal:40,
+    marginTop:10,
+    marginBottom:6,
+    padding:10,
+    maxWidth:180,
+    minWidth:180,
     flexDirection:'row'
   },
   textProd: {

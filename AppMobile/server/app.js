@@ -69,9 +69,9 @@ app.post('/register', (req, res) => {
   });
 
 app.post('/delete',(req,res)=>{
-    itecDB.findByIdAndDelete(req.body._id)
+    itecDBProd.findByIdAndDelete(req.body._id)
     .then(data=>{
-        console.log(data)
+        console.log('excluido'+data)
     }).catch(err=>{
         console.log(err)
     })

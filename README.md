@@ -42,3 +42,4 @@ Abra outro terminal no mesmo diretório e execute:<br>
 *react-native run-android* ou *react-native run-ios*
 
 O bundle será compilado e carregado no seu emulador ou no seu dispositivo conectado.
+# FoodApp

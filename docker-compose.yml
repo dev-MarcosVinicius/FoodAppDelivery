@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  mongo-db:
+    container_name: mongo-db
+    image: mongo:4.4
+    restart: always
+    volumes:
+      - ./.docker/mongodb/dbdata:/data/db
+      - ./.docker/mongodb/configdb:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: food-db
+      MONGO_INITDB_ROOT_PASSWORD: food-db
+      MONGO_INITDB_DATABASE: food-db
+    networks:
+      - food-api
+    ports:
+      - 27017:27017
+
+  # food-api:
+  #   build:
+  #     context: ./api-mobile
+  #   container_name: api-mobile
+  #   tty: true
+  #   entrypoint: dockerize -wait tcp://mongo-db:27017 -timeout 240s sh ./.docker/entrypoint.sh
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./api-mobile:/usr/api-mobile
+  #   networks:
+  #     - megasac
+  #   extra_hosts:
+  #     - host.docker.internal:172.17.0.1
+
+networks:
+  food-api:
+    driver: bridge

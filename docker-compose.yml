@@ -17,20 +17,20 @@ services:
     ports:
       - 27017:27017
 
-  # food-api:
-  #   build:
-  #     context: ./api-mobile
-  #   container_name: api-mobile
-  #   tty: true
-  #   entrypoint: dockerize -wait tcp://mongo-db:27017 -timeout 240s sh ./.docker/entrypoint.sh
-  #   ports:
-  #     - 3000:3000
-  #   volumes:
-  #     - ./api-mobile:/usr/api-mobile
-  #   networks:
-  #     - megasac
-  #   extra_hosts:
-  #     - host.docker.internal:172.17.0.1
+  food-api:
+    build:
+      context: ./api-mobile
+    container_name: api-mobile
+    tty: true
+    entrypoint: dockerize -wait tcp://mongo-db:27017 -timeout 240s sh ./entrypoint.sh
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api-mobile:/usr/api-mobile
+    networks:
+      - food-api
+    extra_hosts:
+      - host.docker.internal:172.17.0.1
 
 networks:
   food-api:
